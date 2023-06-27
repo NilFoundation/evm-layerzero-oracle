@@ -10,9 +10,10 @@ import "../libraries/SimpleSerialize.sol";
 
 import "../interfaces/ILayerZeroEndpoint.sol";
 
-import "../interfaces/ILayerZeroOracleV2.sol";
-
 import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
+
+import "../interfaces/IZKLightClient.sol";
+
 
     struct PlaceholderProof {
         bytes blob;
@@ -20,18 +21,8 @@ import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
         int256[][] columns_rotations;
     }
 
-    struct LightClientStep {
-        uint256 attestedSlot;
-        uint256 finalizedSlot;
-        uint256 participation;
-        bytes32 finalizedHeaderRoot;
-        bytes32 executionStateRoot;
-
-        PlaceholderProof proof;
-    }
-
     struct LightClientRotate {
-        LightClientStep step;
+        LightClientUpdate step;
         bytes32 syncCommitteeSSZ;
         bytes32 syncCommitteePoseidon;
 
@@ -40,15 +31,13 @@ import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 
 /// @notice Uses Ethereum 2's Sync Committee Protocol to keep up-to-date with block headers from a
 ///         Beacon Chain. This is done in a gas-efficient manner using zero-knowledge proofs.
-contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
+contract EthereumLightClient is IProtocolState, IZKLightClient, Ownable {
     bytes32 public immutable GENESIS_VALIDATORS_ROOT;
     uint256 public immutable GENESIS_TIME;
     uint256 public immutable SECONDS_PER_SLOT;
     uint256 public immutable SLOTS_PER_PERIOD;
     uint32 public immutable SOURCE_CHAIN_ID;
     uint16 public immutable FINALITY_THRESHOLD;
-
-    uint32 public immutable CHAIN_PRICE = 144; // exaple Gwei
 
     uint256 internal constant MIN_SYNC_COMMITTEE_PARTICIPANTS = 10;
     uint256 internal constant SYNC_COMMITTEE_SIZE = 512;
@@ -68,8 +57,6 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
     /// @notice The latest slot the light client has a finalized header for.
     uint256 public head = 0;
 
-    ILayerZeroEndpoint public layerZeroEndpoint;
-
     /// @notice Maps from a slot to a beacon block header root.
     mapping(uint256 => bytes32) public headers;
 
@@ -84,7 +71,6 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
 
     event HeadUpdate(uint256 indexed slot, bytes32 indexed root);
     event SyncCommitteeUpdate(uint256 indexed period, bytes32 indexed root);
-    event ModLayerZeroEndpoint(address oldLayerZeroEndpoint, address newLayerZeroEndpoint);
     event OracleNotified(uint16 dstChainId, uint16 proofType, uint blockConfirmations, address ua, uint fee);
     event WithdrawFee(address receiver, uint256 amount);
 
@@ -112,7 +98,6 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
         SOURCE_CHAIN_ID = sourceChainId;
         FINALITY_THRESHOLD = finalityThreshold;
         setSyncCommitteePoseidon(syncCommitteePeriod, syncCommitteePoseidon);
-        layerZeroEndpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
     }
 
     function setVerifier(address v) external onlyOwner {
@@ -133,11 +118,14 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
     ///      1) Enough signatures from the current sync committee for n=512
     ///      2) A valid finality proof
     ///      3) A valid execution state root proof
-    function step(
-        LightClientStep calldata update, 
-        address _userApplication, 
-        uint16 _sourceChainId
+
+    function step (
+        LightClientUpdate calldata update, 
+        uint16 _proofType,
+        uint16 sourceChainId, 
+        address uln
         ) external {
+
         bool finalized = processStep(update);
 
         if (getCurrentSlot() < update.attestedSlot) {
@@ -150,25 +138,22 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
 
         if (finalized) {
             setSlotRoots(update.finalizedSlot, update.finalizedHeaderRoot, update.executionStateRoot);
-            // if the update succeeded -- one shall update the hash on ULN
-            address uln = layerZeroEndpoint.getReceiveLibraryAddress(_userApplication);
-            ILayerZeroUltraLightNodeV2(uln).updateHash(_sourceChainId, stateRoots[head], 
-                update.participation, headers[head]);
+
+            ILayerZeroUltraLightNodeV2(uln).updateHash(
+                sourceChainId, // _srcChainId
+                stateRoots[head], // _lookupHash
+                update.participation, // _confirmations
+                headers[head] // _blockData
+            );
         } else {
             revert("Not enough participants");
         }
     }
 
-    function setLayerZeroEndpoint(address _layerZeroEndpoint) external {
-        require(_layerZeroEndpoint != address(0), "ZkBridgeOracle:Zero address");
-        emit ModLayerZeroEndpoint(address(_layerZeroEndpoint), _layerZeroEndpoint);
-        layerZeroEndpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
-    }
-
     /// @notice Sets the sync committee for the next sync committeee period.
     /// @dev A commitment to the the next sync committeee is signed by the current sync committee.
     function rotate(LightClientRotate calldata update) external {
-        LightClientStep memory stepUpdate = update.step;
+        LightClientUpdate memory stepUpdate = update.step;
         bool finalized = processStep(update.step);
         uint256 currentPeriod = getSyncCommitteePeriod(stepUpdate.finalizedSlot);
         uint256 nextPeriod = currentPeriod + 1;
@@ -181,7 +166,7 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
     }
 
     /// @notice Verifies that the header has enough signatures for finality.
-    function processStep(LightClientStep calldata update) internal view returns (bool) {
+    function processStep(LightClientUpdate calldata update) internal view returns (bool) {
         uint256 currentPeriod = getSyncCommitteePeriod(update.attestedSlot);
 
         if (syncCommitteePoseidons[currentPeriod] == 0) {
@@ -196,7 +181,7 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
     }
 
     /// @notice Serializes the public inputs into a compressed form and verifies the step proof.
-    function zkLightClientStep(LightClientStep calldata update) internal view {
+    function zkLightClientStep(LightClientUpdate calldata update) internal view {
         bytes32 attestedSlotLE = SSZ.toLittleEndian(update.attestedSlot);
         bytes32 finalizedSlotLE = SSZ.toLittleEndian(update.finalizedSlot);
         bytes32 participationLE = SSZ.toLittleEndian(update.participation);
@@ -212,7 +197,7 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
         uint256 t = uint256(SSZ.toLittleEndian(uint256(h)));
         t = t & ((uint256(1) << 253) - 1);
 
-        PlaceholderProof memory proof = update.proof;
+        PlaceholderProof memory proof = abi.decode(update.proof, (PlaceholderProof));
         uint256[1] memory inputs = [uint256(t)];
         require(IVerifier(verifier).verify(proof.blob, proof.init_params, proof.columns_rotations, stepGate));
     }
@@ -280,21 +265,5 @@ contract EthereumLightClient is IProtocolState, ILayerZeroOracleV2, Ownable {
         }
         syncCommitteePoseidons[period] = poseidon;
         emit SyncCommitteeUpdate(period, poseidon);
-    }
-
-
-    //--------------------- For LayerZero
-
-    function assignJob(uint16 _dstChainId, uint16 _proofType, uint64 _outboundBlockConfirmation, address _userApplication) external override returns (uint price){
-        price = CHAIN_PRICE; // Some price for this network 
-        emit OracleNotified(_dstChainId, _proofType, _outboundBlockConfirmation, _userApplication, price);
-    }
-
-    function getFee(uint16 _dstChainId, uint16 _proofType, uint64 _outboundBlockConfirmation, address _userApplication) external override view returns (uint price){
-        price = CHAIN_PRICE;
-    }
-
-    function withdrawFee(address payable _to, uint _amount) external override onlyOwner {
-        emit WithdrawFee(_to, _amount);
     }
 }
