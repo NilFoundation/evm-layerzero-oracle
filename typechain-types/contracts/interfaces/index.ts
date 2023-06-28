@@ -4,5 +4,3 @@
 export type { ILayerZeroEndpoint } from "./ILayerZeroEndpoint";
 export type { ILayerZeroOracleV2 } from "./ILayerZeroOracleV2";
 export type { ILayerZeroUltraLightNodeV2 } from "./ILayerZeroUltraLightNodeV2";
-export type { IProtocolState } from "./IProtocolState";
-export type { IZKLightClient } from "./IZKLightClient";

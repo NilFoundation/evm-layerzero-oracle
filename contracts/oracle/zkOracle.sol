@@ -6,11 +6,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../interfaces/ILayerZeroOracleV2.sol";
 
-import "../interfaces/IProtocolState.sol";
+import "../lorem-ipsum/interfaces/IZKLightClient.sol";
 
 import "../interfaces/ILayerZeroEndpoint.sol";
-
-import "../interfaces/IZKLightClient.sol";
 
 import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 

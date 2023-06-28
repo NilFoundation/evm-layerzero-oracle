@@ -3,4 +3,3 @@
 /* eslint-disable */
 import type * as zkOracleSol from "./zkOracle.sol";
 export type { zkOracleSol };
-export type { LoremIpsumOracle } from "./LoremIpsumOracle";

@@ -125,6 +125,22 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
+      name: "ILayerZeroEndpoint",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILayerZeroEndpoint__factory>;
+    getContractFactory(
+      name: "ILayerZeroOracleV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILayerZeroOracleV2__factory>;
+    getContractFactory(
+      name: "ILayerZeroUltraLightNodeV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILayerZeroUltraLightNodeV2__factory>;
+    getContractFactory(
+      name: "Timelock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Timelock__factory>;
+    getContractFactory(
       name: "IExecuteMessageTransitionHandler",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IExecuteMessageTransitionHandler__factory>;
@@ -177,17 +193,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EthereumLightClient__factory>;
     getContractFactory(
-      name: "ILayerZeroEndpoint",
+      name: "IProofHandler",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ILayerZeroEndpoint__factory>;
-    getContractFactory(
-      name: "ILayerZeroOracleV2",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ILayerZeroOracleV2__factory>;
-    getContractFactory(
-      name: "ILayerZeroUltraLightNodeV2",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ILayerZeroUltraLightNodeV2__factory>;
+    ): Promise<Contracts.IProofHandler__factory>;
     getContractFactory(
       name: "IProtocolState",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -197,6 +205,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IZKLightClient__factory>;
     getContractFactory(
+      name: "AccessControl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccessControl__factory>;
+    getContractFactory(
       name: "UUPSProxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UUPSProxy__factory>;
@@ -205,9 +217,29 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Timelock__factory>;
     getContractFactory(
+      name: "MockEthereumLightClient",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockEthereumLightClient__factory>;
+    getContractFactory(
+      name: "MockEthereumLightClientHandler",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockEthereumLightClientHandler__factory>;
+    getContractFactory(
+      name: "MockRequestHandler",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockRequestHandler__factory>;
+    getContractFactory(
+      name: "MockResponseHandler",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockResponseHandler__factory>;
+    getContractFactory(
       name: "LoremIpsumOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LoremIpsumOracle__factory>;
+    getContractFactory(
+      name: "LoremIpsumTransitionsManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LoremIpsumTransitionsManager__factory>;
     getContractFactory(
       name: "EthereumLightClient",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -354,6 +386,26 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
+      name: "ILayerZeroEndpoint",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ILayerZeroEndpoint>;
+    getContractAt(
+      name: "ILayerZeroOracleV2",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ILayerZeroOracleV2>;
+    getContractAt(
+      name: "ILayerZeroUltraLightNodeV2",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ILayerZeroUltraLightNodeV2>;
+    getContractAt(
+      name: "Timelock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Timelock>;
+    getContractAt(
       name: "IExecuteMessageTransitionHandler",
       address: string,
       signer?: ethers.Signer
@@ -419,20 +471,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.EthereumLightClient>;
     getContractAt(
-      name: "ILayerZeroEndpoint",
+      name: "IProofHandler",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ILayerZeroEndpoint>;
-    getContractAt(
-      name: "ILayerZeroOracleV2",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ILayerZeroOracleV2>;
-    getContractAt(
-      name: "ILayerZeroUltraLightNodeV2",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ILayerZeroUltraLightNodeV2>;
+    ): Promise<Contracts.IProofHandler>;
     getContractAt(
       name: "IProtocolState",
       address: string,
@@ -444,6 +486,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IZKLightClient>;
     getContractAt(
+      name: "AccessControl",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccessControl>;
+    getContractAt(
       name: "UUPSProxy",
       address: string,
       signer?: ethers.Signer
@@ -454,10 +501,35 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Timelock>;
     getContractAt(
+      name: "MockEthereumLightClient",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockEthereumLightClient>;
+    getContractAt(
+      name: "MockEthereumLightClientHandler",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockEthereumLightClientHandler>;
+    getContractAt(
+      name: "MockRequestHandler",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockRequestHandler>;
+    getContractAt(
+      name: "MockResponseHandler",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockResponseHandler>;
+    getContractAt(
       name: "LoremIpsumOracle",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.LoremIpsumOracle>;
+    getContractAt(
+      name: "LoremIpsumTransitionsManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LoremIpsumTransitionsManager>;
     getContractAt(
       name: "EthereumLightClient",
       address: string,

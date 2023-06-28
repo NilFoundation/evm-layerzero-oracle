@@ -4,5 +4,3 @@
 export { ILayerZeroEndpoint__factory } from "./ILayerZeroEndpoint__factory";
 export { ILayerZeroOracleV2__factory } from "./ILayerZeroOracleV2__factory";
 export { ILayerZeroUltraLightNodeV2__factory } from "./ILayerZeroUltraLightNodeV2__factory";
-export { IProtocolState__factory } from "./IProtocolState__factory";
-export { IZKLightClient__factory } from "./IZKLightClient__factory";

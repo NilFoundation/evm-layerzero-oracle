@@ -2,4 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as zkOracleSol from "./zkOracle.sol";
-export { LoremIpsumOracle__factory } from "./LoremIpsumOracle__factory";
