@@ -1,12 +1,10 @@
 require("@nomicfoundation/hardhat-toolbox");
-require("@nomiclabs/hardhat-ethers");
-require("hardhat-deploy");
-require('hardhat-deploy-ethers')
+//require("@nomiclabs/hardhat-ethers");
+//require("hardhat-deploy");
+//require('hardhat-deploy-ethers')
 require('@openzeppelin/hardhat-upgrades');
-require("hardhat-contract-sizer");
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-web3"); 
-require('solidity-coverage');
+//require("hardhat-contract-sizer");
+//require('solidity-coverage');
 
 import './tasks/verify_mina_proof'
 

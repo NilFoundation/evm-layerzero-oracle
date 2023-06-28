@@ -8,7 +8,7 @@ describe('End2end tests', function () {
   describe('Full end2end - Success', function () {
     
     it("Begin", async function () {
-      let [signer1] = await Hardhat.ethers.getSigners();
+      let [signer1] = await ethers.getSigners();
       const source_chain_id = Hardhat.network.config.chainId;
       const target_chain_id = source_chain_id;
       const magicNumberForEthLightClientProofSystem = 0xAABBCCDD;
