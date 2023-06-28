@@ -118,3 +118,9 @@ export type { LoremIpsumOracle } from "./contracts/lorem-ipsum/oracle/LoremIpsum
 export { LoremIpsumOracle__factory } from "./factories/contracts/lorem-ipsum/oracle/LoremIpsumOracle__factory";
 export type { LoremIpsumTransitionsManager } from "./contracts/lorem-ipsum/oracle/LoremIpsumTransitionsManager";
 export { LoremIpsumTransitionsManager__factory } from "./factories/contracts/lorem-ipsum/oracle/LoremIpsumTransitionsManager__factory";
+export type { EthereumLayerZeroEndpoint } from "./contracts/mocks/EthereumLayerZeroEndpoint";
+export { EthereumLayerZeroEndpoint__factory } from "./factories/contracts/mocks/EthereumLayerZeroEndpoint__factory";
+export type { EthereumLayerZeroUltraLightNodeV2 } from "./contracts/mocks/EthereumLayerZeroUltraLightNodeV2";
+export { EthereumLayerZeroUltraLightNodeV2__factory } from "./factories/contracts/mocks/EthereumLayerZeroUltraLightNodeV2__factory";
+export type { ZkOracle } from "./contracts/oracle/zkOracle.sol/ZkOracle";
+export { ZkOracle__factory } from "./factories/contracts/oracle/zkOracle.sol/ZkOracle__factory";

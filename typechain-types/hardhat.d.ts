@@ -241,9 +241,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LoremIpsumTransitionsManager__factory>;
     getContractFactory(
+      name: "EthereumLayerZeroEndpoint",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EthereumLayerZeroEndpoint__factory>;
+    getContractFactory(
+      name: "EthereumLayerZeroUltraLightNodeV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EthereumLayerZeroUltraLightNodeV2__factory>;
+    getContractFactory(
       name: "EthereumLightClient",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EthereumLightClient__factory>;
+    getContractFactory(
+      name: "ZkOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ZkOracle__factory>;
 
     getContractAt(
       name: "IVerifier",
@@ -531,10 +543,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LoremIpsumTransitionsManager>;
     getContractAt(
+      name: "EthereumLayerZeroEndpoint",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EthereumLayerZeroEndpoint>;
+    getContractAt(
+      name: "EthereumLayerZeroUltraLightNodeV2",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EthereumLayerZeroUltraLightNodeV2>;
+    getContractAt(
       name: "EthereumLightClient",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.EthereumLightClient>;
+    getContractAt(
+      name: "ZkOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ZkOracle>;
 
     // default types
     getContractFactory(

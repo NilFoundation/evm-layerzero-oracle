@@ -7,5 +7,7 @@ import type * as libraries from "./libraries";
 export type { libraries };
 import type * as loremIpsum from "./lorem-ipsum";
 export type { loremIpsum };
+import type * as mocks from "./mocks";
+export type { mocks };
 import type * as oracle from "./oracle";
 export type { oracle };

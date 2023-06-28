@@ -13,7 +13,7 @@ import "../interfaces/ILayerZeroEndpoint.sol";
 import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 
 
-contract EthereumLightClient is ILayerZeroOracleV2, Ownable {
+contract zkOracle is ILayerZeroOracleV2, Ownable {
 
     event ModLayerZeroEndpoint(address oldLayerZeroEndpoint, address newLayerZeroEndpoint);
     event OracleNotified(uint16 dstChainId, uint16 proofType, uint blockConfirmations, address ua, uint fee);
