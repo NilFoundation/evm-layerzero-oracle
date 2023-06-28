@@ -6,14 +6,9 @@ import '@nilfoundation/evm-placeholder-verification/contracts/interfaces/verifie
 
 import "../interfaces/IProtocolState.sol";
 
-import "../libraries/SimpleSerialize.sol";
-
-import "../interfaces/ILayerZeroEndpoint.sol";
-
-import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
-
 import "../interfaces/IZKLightClient.sol";
 
+import "../libraries/SimpleSerialize.sol";
 
     struct PlaceholderProof {
         bytes blob;
@@ -31,7 +26,7 @@ import "../interfaces/IZKLightClient.sol";
 
 /// @notice Uses Ethereum 2's Sync Committee Protocol to keep up-to-date with block headers from a
 ///         Beacon Chain. This is done in a gas-efficient manner using zero-knowledge proofs.
-contract EthereumLightClient is IProtocolState, IZKLightClient, Ownable {
+contract EthereumLightClient is IProtocolState, Ownable, IZKLightClient {
     bytes32 public immutable GENESIS_VALIDATORS_ROOT;
     uint256 public immutable GENESIS_TIME;
     uint256 public immutable SECONDS_PER_SLOT;
@@ -71,8 +66,6 @@ contract EthereumLightClient is IProtocolState, IZKLightClient, Ownable {
 
     event HeadUpdate(uint256 indexed slot, bytes32 indexed root);
     event SyncCommitteeUpdate(uint256 indexed period, bytes32 indexed root);
-    event OracleNotified(uint16 dstChainId, uint16 proofType, uint blockConfirmations, address ua, uint fee);
-    event WithdrawFee(address receiver, uint256 amount);
 
     constructor(address placeholderVerifier,
         address step,
@@ -84,8 +77,7 @@ contract EthereumLightClient is IProtocolState, IZKLightClient, Ownable {
         uint256 syncCommitteePeriod,
         bytes32 syncCommitteePoseidon,
         uint32 sourceChainId,
-        uint16 finalityThreshold,
-        address _layerZeroEndpoint) {
+        uint16 finalityThreshold) {
 
         verifier = placeholderVerifier;
         stepGate = step;
@@ -112,20 +104,12 @@ contract EthereumLightClient is IProtocolState, IZKLightClient, Ownable {
         stepGate = gateArgument;
     }
 
-    /// Function is called by ZK-oracle !!!!
     /// @notice Updates the head of the light client to the provided slot.
     /// @dev The conditions for updating the head of the light client involve checking:
     ///      1) Enough signatures from the current sync committee for n=512
     ///      2) A valid finality proof
     ///      3) A valid execution state root proof
-
-    function step (
-        LightClientUpdate calldata update, 
-        uint16 _proofType,
-        uint16 sourceChainId, 
-        address uln
-        ) external {
-
+    function step(LightClientUpdate calldata update) external {
         bool finalized = processStep(update);
 
         if (getCurrentSlot() < update.attestedSlot) {
@@ -138,13 +122,6 @@ contract EthereumLightClient is IProtocolState, IZKLightClient, Ownable {
 
         if (finalized) {
             setSlotRoots(update.finalizedSlot, update.finalizedHeaderRoot, update.executionStateRoot);
-
-            ILayerZeroUltraLightNodeV2(uln).updateHash(
-                sourceChainId, // _srcChainId
-                stateRoots[head], // _lookupHash
-                update.participation, // _confirmations
-                headers[head] // _blockData
-            );
         } else {
             revert("Not enough participants");
         }
@@ -175,13 +152,13 @@ contract EthereumLightClient is IProtocolState, IZKLightClient, Ownable {
             revert("Less than MIN_SYNC_COMMITTEE_PARTICIPANTS signed.");
         }
 
-        zkLightClientStep(update);
+        zkLightClientUpdate(update);
 
         return update.participation > FINALITY_THRESHOLD;
     }
 
     /// @notice Serializes the public inputs into a compressed form and verifies the step proof.
-    function zkLightClientStep(LightClientUpdate calldata update) internal view {
+    function zkLightClientUpdate(LightClientUpdate calldata update) internal view {
         bytes32 attestedSlotLE = SSZ.toLittleEndian(update.attestedSlot);
         bytes32 finalizedSlotLE = SSZ.toLittleEndian(update.finalizedSlot);
         bytes32 participationLE = SSZ.toLittleEndian(update.participation);

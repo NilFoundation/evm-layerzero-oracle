@@ -98,6 +98,8 @@ export type { ILayerZeroUltraLightNodeV2 } from "./contracts/interfaces/ILayerZe
 export { ILayerZeroUltraLightNodeV2__factory } from "./factories/contracts/interfaces/ILayerZeroUltraLightNodeV2__factory";
 export type { IProtocolState } from "./contracts/interfaces/IProtocolState";
 export { IProtocolState__factory } from "./factories/contracts/interfaces/IProtocolState__factory";
+export type { IZKLightClient } from "./contracts/interfaces/IZKLightClient";
+export { IZKLightClient__factory } from "./factories/contracts/interfaces/IZKLightClient__factory";
 export type { UUPSProxy } from "./contracts/libraries/Proxy.sol/UUPSProxy";
 export { UUPSProxy__factory } from "./factories/contracts/libraries/Proxy.sol/UUPSProxy__factory";
 export type { Timelock } from "./contracts/libraries/Timelock";

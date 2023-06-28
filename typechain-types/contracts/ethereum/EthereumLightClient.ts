@@ -27,6 +27,31 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export type LightClientUpdateStruct = {
+  attestedSlot: PromiseOrValue<BigNumberish>;
+  finalizedSlot: PromiseOrValue<BigNumberish>;
+  participation: PromiseOrValue<BigNumberish>;
+  finalizedHeaderRoot: PromiseOrValue<BytesLike>;
+  executionStateRoot: PromiseOrValue<BytesLike>;
+  proof: PromiseOrValue<BytesLike>;
+};
+
+export type LightClientUpdateStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string,
+  string,
+  string
+] & {
+  attestedSlot: BigNumber;
+  finalizedSlot: BigNumber;
+  participation: BigNumber;
+  finalizedHeaderRoot: string;
+  executionStateRoot: string;
+  proof: string;
+};
+
 export type PlaceholderProofStruct = {
   blob: PromiseOrValue<BytesLike>;
   init_params: PromiseOrValue<BigNumberish>[];
@@ -43,45 +68,20 @@ export type PlaceholderProofStructOutput = [
   columns_rotations: BigNumber[][];
 };
 
-export type LightClientStepStruct = {
-  attestedSlot: PromiseOrValue<BigNumberish>;
-  finalizedSlot: PromiseOrValue<BigNumberish>;
-  participation: PromiseOrValue<BigNumberish>;
-  finalizedHeaderRoot: PromiseOrValue<BytesLike>;
-  executionStateRoot: PromiseOrValue<BytesLike>;
-  proof: PlaceholderProofStruct;
-};
-
-export type LightClientStepStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  string,
-  string,
-  PlaceholderProofStructOutput
-] & {
-  attestedSlot: BigNumber;
-  finalizedSlot: BigNumber;
-  participation: BigNumber;
-  finalizedHeaderRoot: string;
-  executionStateRoot: string;
-  proof: PlaceholderProofStructOutput;
-};
-
 export type LightClientRotateStruct = {
-  step: LightClientStepStruct;
+  step: LightClientUpdateStruct;
   syncCommitteeSSZ: PromiseOrValue<BytesLike>;
   syncCommitteePoseidon: PromiseOrValue<BytesLike>;
   proof: PlaceholderProofStruct;
 };
 
 export type LightClientRotateStructOutput = [
-  LightClientStepStructOutput,
+  LightClientUpdateStructOutput,
   string,
   string,
   PlaceholderProofStructOutput
 ] & {
-  step: LightClientStepStructOutput;
+  step: LightClientUpdateStructOutput;
   syncCommitteeSSZ: string;
   syncCommitteePoseidon: string;
   proof: PlaceholderProofStructOutput;
@@ -95,25 +95,20 @@ export interface EthereumLightClientInterface extends utils.Interface {
     "SECONDS_PER_SLOT()": FunctionFragment;
     "SLOTS_PER_PERIOD()": FunctionFragment;
     "SOURCE_CHAIN_ID()": FunctionFragment;
-    "assignJob(uint16,uint16,uint64,address)": FunctionFragment;
     "consistent()": FunctionFragment;
-    "getFee(uint16,uint16,uint64,address)": FunctionFragment;
     "head()": FunctionFragment;
     "headers(uint256)": FunctionFragment;
-    "layerZeroEndpoint()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "rotate(((uint256,uint256,uint256,bytes32,bytes32,(bytes,uint256[],int256[][])),bytes32,bytes32,(bytes,uint256[],int256[][])))": FunctionFragment;
-    "setLayerZeroEndpoint(address)": FunctionFragment;
+    "rotate(((uint256,uint256,uint256,bytes32,bytes32,bytes),bytes32,bytes32,(bytes,uint256[],int256[][])))": FunctionFragment;
     "setRotateGate(address)": FunctionFragment;
     "setStepGate(address)": FunctionFragment;
     "setVerifier(address)": FunctionFragment;
     "stateRoots(uint256)": FunctionFragment;
-    "step((uint256,uint256,uint256,bytes32,bytes32,(bytes,uint256[],int256[][])),address,uint16)": FunctionFragment;
+    "step((uint256,uint256,uint256,bytes32,bytes32,bytes))": FunctionFragment;
     "syncCommitteePoseidons(uint256)": FunctionFragment;
     "timestamps(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "withdrawFee(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -124,16 +119,12 @@ export interface EthereumLightClientInterface extends utils.Interface {
       | "SECONDS_PER_SLOT"
       | "SLOTS_PER_PERIOD"
       | "SOURCE_CHAIN_ID"
-      | "assignJob"
       | "consistent"
-      | "getFee"
       | "head"
       | "headers"
-      | "layerZeroEndpoint"
       | "owner"
       | "renounceOwnership"
       | "rotate"
-      | "setLayerZeroEndpoint"
       | "setRotateGate"
       | "setStepGate"
       | "setVerifier"
@@ -142,7 +133,6 @@ export interface EthereumLightClientInterface extends utils.Interface {
       | "syncCommitteePoseidons"
       | "timestamps"
       | "transferOwnership"
-      | "withdrawFee"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -170,35 +160,13 @@ export interface EthereumLightClientInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "assignJob",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "consistent",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getFee",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
-    ]
   ): string;
   encodeFunctionData(functionFragment: "head", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "headers",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "layerZeroEndpoint",
-    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -208,10 +176,6 @@ export interface EthereumLightClientInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "rotate",
     values: [LightClientRotateStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLayerZeroEndpoint",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setRotateGate",
@@ -231,11 +195,7 @@ export interface EthereumLightClientInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "step",
-    values: [
-      LightClientStepStruct,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [LightClientUpdateStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "syncCommitteePoseidons",
@@ -248,10 +208,6 @@ export interface EthereumLightClientInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawFee",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -278,25 +234,15 @@ export interface EthereumLightClientInterface extends utils.Interface {
     functionFragment: "SOURCE_CHAIN_ID",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "assignJob", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "consistent", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getFee", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "head", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "headers", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "layerZeroEndpoint",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rotate", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setLayerZeroEndpoint",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "setRotateGate",
     data: BytesLike
@@ -320,26 +266,16 @@ export interface EthereumLightClientInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawFee",
-    data: BytesLike
-  ): Result;
 
   events: {
     "HeadUpdate(uint256,bytes32)": EventFragment;
-    "ModLayerZeroEndpoint(address,address)": EventFragment;
-    "OracleNotified(uint16,uint16,uint256,address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "SyncCommitteeUpdate(uint256,bytes32)": EventFragment;
-    "WithdrawFee(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "HeadUpdate"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ModLayerZeroEndpoint"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OracleNotified"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SyncCommitteeUpdate"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrawFee"): EventFragment;
 }
 
 export interface HeadUpdateEventObject {
@@ -352,32 +288,6 @@ export type HeadUpdateEvent = TypedEvent<
 >;
 
 export type HeadUpdateEventFilter = TypedEventFilter<HeadUpdateEvent>;
-
-export interface ModLayerZeroEndpointEventObject {
-  oldLayerZeroEndpoint: string;
-  newLayerZeroEndpoint: string;
-}
-export type ModLayerZeroEndpointEvent = TypedEvent<
-  [string, string],
-  ModLayerZeroEndpointEventObject
->;
-
-export type ModLayerZeroEndpointEventFilter =
-  TypedEventFilter<ModLayerZeroEndpointEvent>;
-
-export interface OracleNotifiedEventObject {
-  dstChainId: number;
-  proofType: number;
-  blockConfirmations: BigNumber;
-  ua: string;
-  fee: BigNumber;
-}
-export type OracleNotifiedEvent = TypedEvent<
-  [number, number, BigNumber, string, BigNumber],
-  OracleNotifiedEventObject
->;
-
-export type OracleNotifiedEventFilter = TypedEventFilter<OracleNotifiedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -402,17 +312,6 @@ export type SyncCommitteeUpdateEvent = TypedEvent<
 
 export type SyncCommitteeUpdateEventFilter =
   TypedEventFilter<SyncCommitteeUpdateEvent>;
-
-export interface WithdrawFeeEventObject {
-  receiver: string;
-  amount: BigNumber;
-}
-export type WithdrawFeeEvent = TypedEvent<
-  [string, BigNumber],
-  WithdrawFeeEventObject
->;
-
-export type WithdrawFeeEventFilter = TypedEventFilter<WithdrawFeeEvent>;
 
 export interface EthereumLightClient extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -453,23 +352,7 @@ export interface EthereumLightClient extends BaseContract {
 
     SOURCE_CHAIN_ID(overrides?: CallOverrides): Promise<[number]>;
 
-    assignJob(
-      _dstChainId: PromiseOrValue<BigNumberish>,
-      _proofType: PromiseOrValue<BigNumberish>,
-      _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-      _userApplication: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     consistent(overrides?: CallOverrides): Promise<[boolean]>;
-
-    getFee(
-      _dstChainId: PromiseOrValue<BigNumberish>,
-      _proofType: PromiseOrValue<BigNumberish>,
-      _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { price: BigNumber }>;
 
     head(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -477,8 +360,6 @@ export interface EthereumLightClient extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    layerZeroEndpoint(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -488,11 +369,6 @@ export interface EthereumLightClient extends BaseContract {
 
     rotate(
       update: LightClientRotateStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setLayerZeroEndpoint(
-      _layerZeroEndpoint: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -517,9 +393,7 @@ export interface EthereumLightClient extends BaseContract {
     ): Promise<[string]>;
 
     step(
-      update: LightClientStepStruct,
-      _userApplication: PromiseOrValue<string>,
-      _sourceChainId: PromiseOrValue<BigNumberish>,
+      update: LightClientUpdateStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -537,12 +411,6 @@ export interface EthereumLightClient extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    withdrawFee(
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
 
   FINALITY_THRESHOLD(overrides?: CallOverrides): Promise<number>;
@@ -557,23 +425,7 @@ export interface EthereumLightClient extends BaseContract {
 
   SOURCE_CHAIN_ID(overrides?: CallOverrides): Promise<number>;
 
-  assignJob(
-    _dstChainId: PromiseOrValue<BigNumberish>,
-    _proofType: PromiseOrValue<BigNumberish>,
-    _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-    _userApplication: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   consistent(overrides?: CallOverrides): Promise<boolean>;
-
-  getFee(
-    _dstChainId: PromiseOrValue<BigNumberish>,
-    _proofType: PromiseOrValue<BigNumberish>,
-    _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-    _userApplication: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   head(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -581,8 +433,6 @@ export interface EthereumLightClient extends BaseContract {
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
-
-  layerZeroEndpoint(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -592,11 +442,6 @@ export interface EthereumLightClient extends BaseContract {
 
   rotate(
     update: LightClientRotateStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setLayerZeroEndpoint(
-    _layerZeroEndpoint: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -621,9 +466,7 @@ export interface EthereumLightClient extends BaseContract {
   ): Promise<string>;
 
   step(
-    update: LightClientStepStruct,
-    _userApplication: PromiseOrValue<string>,
-    _sourceChainId: PromiseOrValue<BigNumberish>,
+    update: LightClientUpdateStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -642,12 +485,6 @@ export interface EthereumLightClient extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  withdrawFee(
-    _to: PromiseOrValue<string>,
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     FINALITY_THRESHOLD(overrides?: CallOverrides): Promise<number>;
 
@@ -661,23 +498,7 @@ export interface EthereumLightClient extends BaseContract {
 
     SOURCE_CHAIN_ID(overrides?: CallOverrides): Promise<number>;
 
-    assignJob(
-      _dstChainId: PromiseOrValue<BigNumberish>,
-      _proofType: PromiseOrValue<BigNumberish>,
-      _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     consistent(overrides?: CallOverrides): Promise<boolean>;
-
-    getFee(
-      _dstChainId: PromiseOrValue<BigNumberish>,
-      _proofType: PromiseOrValue<BigNumberish>,
-      _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     head(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -686,19 +507,12 @@ export interface EthereumLightClient extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    layerZeroEndpoint(overrides?: CallOverrides): Promise<string>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     rotate(
       update: LightClientRotateStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLayerZeroEndpoint(
-      _layerZeroEndpoint: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -723,9 +537,7 @@ export interface EthereumLightClient extends BaseContract {
     ): Promise<string>;
 
     step(
-      update: LightClientStepStruct,
-      _userApplication: PromiseOrValue<string>,
-      _sourceChainId: PromiseOrValue<BigNumberish>,
+      update: LightClientUpdateStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -743,12 +555,6 @@ export interface EthereumLightClient extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    withdrawFee(
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
@@ -760,30 +566,6 @@ export interface EthereumLightClient extends BaseContract {
       slot?: PromiseOrValue<BigNumberish> | null,
       root?: PromiseOrValue<BytesLike> | null
     ): HeadUpdateEventFilter;
-
-    "ModLayerZeroEndpoint(address,address)"(
-      oldLayerZeroEndpoint?: null,
-      newLayerZeroEndpoint?: null
-    ): ModLayerZeroEndpointEventFilter;
-    ModLayerZeroEndpoint(
-      oldLayerZeroEndpoint?: null,
-      newLayerZeroEndpoint?: null
-    ): ModLayerZeroEndpointEventFilter;
-
-    "OracleNotified(uint16,uint16,uint256,address,uint256)"(
-      dstChainId?: null,
-      proofType?: null,
-      blockConfirmations?: null,
-      ua?: null,
-      fee?: null
-    ): OracleNotifiedEventFilter;
-    OracleNotified(
-      dstChainId?: null,
-      proofType?: null,
-      blockConfirmations?: null,
-      ua?: null,
-      fee?: null
-    ): OracleNotifiedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
@@ -802,12 +584,6 @@ export interface EthereumLightClient extends BaseContract {
       period?: PromiseOrValue<BigNumberish> | null,
       root?: PromiseOrValue<BytesLike> | null
     ): SyncCommitteeUpdateEventFilter;
-
-    "WithdrawFee(address,uint256)"(
-      receiver?: null,
-      amount?: null
-    ): WithdrawFeeEventFilter;
-    WithdrawFee(receiver?: null, amount?: null): WithdrawFeeEventFilter;
   };
 
   estimateGas: {
@@ -823,23 +599,7 @@ export interface EthereumLightClient extends BaseContract {
 
     SOURCE_CHAIN_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assignJob(
-      _dstChainId: PromiseOrValue<BigNumberish>,
-      _proofType: PromiseOrValue<BigNumberish>,
-      _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-      _userApplication: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     consistent(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getFee(
-      _dstChainId: PromiseOrValue<BigNumberish>,
-      _proofType: PromiseOrValue<BigNumberish>,
-      _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     head(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -847,8 +607,6 @@ export interface EthereumLightClient extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    layerZeroEndpoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -858,11 +616,6 @@ export interface EthereumLightClient extends BaseContract {
 
     rotate(
       update: LightClientRotateStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setLayerZeroEndpoint(
-      _layerZeroEndpoint: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -887,9 +640,7 @@ export interface EthereumLightClient extends BaseContract {
     ): Promise<BigNumber>;
 
     step(
-      update: LightClientStepStruct,
-      _userApplication: PromiseOrValue<string>,
-      _sourceChainId: PromiseOrValue<BigNumberish>,
+      update: LightClientUpdateStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -905,12 +656,6 @@ export interface EthereumLightClient extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdrawFee(
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -932,23 +677,7 @@ export interface EthereumLightClient extends BaseContract {
 
     SOURCE_CHAIN_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    assignJob(
-      _dstChainId: PromiseOrValue<BigNumberish>,
-      _proofType: PromiseOrValue<BigNumberish>,
-      _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-      _userApplication: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     consistent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getFee(
-      _dstChainId: PromiseOrValue<BigNumberish>,
-      _proofType: PromiseOrValue<BigNumberish>,
-      _outboundBlockConfirmation: PromiseOrValue<BigNumberish>,
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     head(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -956,8 +685,6 @@ export interface EthereumLightClient extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    layerZeroEndpoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -967,11 +694,6 @@ export interface EthereumLightClient extends BaseContract {
 
     rotate(
       update: LightClientRotateStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setLayerZeroEndpoint(
-      _layerZeroEndpoint: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -996,9 +718,7 @@ export interface EthereumLightClient extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     step(
-      update: LightClientStepStruct,
-      _userApplication: PromiseOrValue<string>,
-      _sourceChainId: PromiseOrValue<BigNumberish>,
+      update: LightClientUpdateStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1014,12 +734,6 @@ export interface EthereumLightClient extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawFee(
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

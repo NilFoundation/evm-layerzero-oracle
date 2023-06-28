@@ -193,6 +193,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IProtocolState__factory>;
     getContractFactory(
+      name: "IZKLightClient",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IZKLightClient__factory>;
+    getContractFactory(
       name: "UUPSProxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UUPSProxy__factory>;
@@ -204,6 +208,10 @@ declare module "hardhat/types/runtime" {
       name: "LoremIpsumOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LoremIpsumOracle__factory>;
+    getContractFactory(
+      name: "EthereumLightClient",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EthereumLightClient__factory>;
 
     getContractAt(
       name: "IVerifier",
@@ -431,6 +439,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IProtocolState>;
     getContractAt(
+      name: "IZKLightClient",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IZKLightClient>;
+    getContractAt(
       name: "UUPSProxy",
       address: string,
       signer?: ethers.Signer
@@ -445,6 +458,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.LoremIpsumOracle>;
+    getContractAt(
+      name: "EthereumLightClient",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EthereumLightClient>;
 
     // default types
     getContractFactory(

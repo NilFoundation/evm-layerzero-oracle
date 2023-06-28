@@ -23,42 +23,68 @@ contract EthereumLightClient is ILayerZeroOracleV2, Ownable {
 
     // userApplication => lightClient address
     mapping(address => address) lightClients;
+    // proofType => dstChainId => price on chain with designated proof type
     mapping(uint16 => mapping(uint16 => uint)) public chainPriceLookup;
+    // array of ultra light nodes
     address[] ULNs;
+
     ILayerZeroEndpoint public layerZeroEndpoint;
 
-    constructor(address[] memory _ULNs) {
+    constructor(address _layerZeroEndpoint, address[] memory _ULNs) {
         ULNs = _ULNs;
-    }
-
-    function setlightClient(address _lightClient, address _userApplication) external {
-        lightClients[_userApplication] = _lightClient;
-    }
-
-    function setLayerZeroEndpoint(address _layerZeroEndpoint) external {
-        require(_layerZeroEndpoint != address(0), "ZkBridgeOracle:Zero address");
-        emit ModLayerZeroEndpoint(address(_layerZeroEndpoint), _layerZeroEndpoint);
         layerZeroEndpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
     }
 
-    function processRequest(uint16 dstChainId, uint16 proofType, address userApplication, LightClientUpdate calldata lcUpdate) external {
+    function setLightClient(address _lightClient, address _userApplication) external {
+        lightClients[_userApplication] = _lightClient;
+    }
+
+    /// @notice set LayerZero endpoint address
+    function setLayerZeroEndpoint(address _layerZeroEndpoint) external onlyOwner {
+        require(_layerZeroEndpoint != address(0), "zero address!");
+
+        layerZeroEndpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
+
+        emit ModLayerZeroEndpoint(address(_layerZeroEndpoint), _layerZeroEndpoint);
+    }
+
+    ///@notice the function is called by the Oracle to verify and update the light client state and then update the hash on ULN
+    // 1) get ULN address for a specific user application
+    // 2) update light client (depending on the user application) state after proof verification
+    // 3) update hash on ULN
+    function processRequest(
+        uint16 srcChainId, 
+        uint16 proofType, 
+        address userApplication, 
+        LightClientUpdate calldata lcUpdate
+        ) external {
         
         require(lightClients[userApplication] != address(0), "there's no such user applicaion!");
 
         address uln = layerZeroEndpoint.getReceiveLibraryAddress(userApplication);
         bool status;
         
+        require(uln != address(0), "ULN is not defined for the user application");
+
         bytes memory stepInputData = abi.encodeWithSelector(
                 IZKLightClient.step.selector,
                 proofType,
-                dstChainId,
+                srcChainId,
                 lcUpdate,
                 uln // here must be public input
         );
         
         (status,) = lightClients[userApplication].call(stepInputData);
+        
+        require(status, "light client update call fail!");
 
-        require(status, "update step fail!");
+        ILayerZeroUltraLightNodeV2(uln).updateHash(
+                srcChainId, // _srcChainId
+                lcUpdate.executionStateRoot, // _lookupHash
+                lcUpdate.participation, // _confirmations
+                lcUpdate.finalizedHeaderRoot // _blockData
+            );
+
     }
 
     function assignJob(uint16 _dstChainId, uint16 _proofType, uint64 _outboundBlockConfirmation, address _userApplication) external override returns (uint price) {
@@ -66,6 +92,7 @@ contract EthereumLightClient is ILayerZeroOracleV2, Ownable {
         emit OracleNotified(_dstChainId, _proofType, _outboundBlockConfirmation, _userApplication, price);
     }
 
+    /// @notice query the oracle price for relaying block information to the destination chain
     function getFee(uint16 _dstChainId, uint16 _proofType, uint64 _outboundBlockConfirmation, address _userApplication) external override view returns (uint price) {
         price = _getFee(_dstChainId, _proofType, _outboundBlockConfirmation, _userApplication);
     }
@@ -82,17 +109,21 @@ contract EthereumLightClient is ILayerZeroOracleV2, Ownable {
         return ULNs[_index];
     }
 
-    function feeBalance() public view returns (uint256 balance){
+    /// @notice finds total uln balance
+    function feeBalance() public view returns (uint256 balance) {
         for (uint256 i = 0; i < getLzUlnLength(); i++) {
             uint256 ulnBalance = ILayerZeroUltraLightNodeV2(getLzUln(i)).accruedNativeFee(address(this));
             balance += ulnBalance;
         }
     }
 
+    /// @notice withdraw the accrued fee in ultra light node
     function withdrawFee(address payable _to, uint _amount) external override onlyOwner {
-        require(feeBalance() >= _amount, "ZkBridgeOracle:Insufficient Balance");
+        require(feeBalance() >= _amount, "insufficient balance");
+        
         uint256 surplusAmount = _amount;
-        for (uint256 i = 0; i < getLzUlnLength(); i++) {
+        
+        for (uint256 i = 0; i < getLzUlnLength(); ++i) {
             uint256 ulnBalance = ILayerZeroUltraLightNodeV2(getLzUln(i)).accruedNativeFee(address(this));
             if (ulnBalance > 0) {
                 if (ulnBalance >= surplusAmount) {

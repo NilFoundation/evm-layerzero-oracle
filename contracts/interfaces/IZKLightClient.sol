@@ -12,6 +12,6 @@ struct LightClientUpdate {
 
 interface IZKLightClient {
 
-    function step(LightClientUpdate calldata update, uint16 _proofType, uint16 sourceChainId, address uln) external;
+    function step(LightClientUpdate calldata update) external;
 
 }
