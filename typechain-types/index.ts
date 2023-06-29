@@ -122,5 +122,7 @@ export type { EthereumLayerZeroEndpoint } from "./contracts/mocks/EthereumLayerZ
 export { EthereumLayerZeroEndpoint__factory } from "./factories/contracts/mocks/EthereumLayerZeroEndpoint__factory";
 export type { EthereumLayerZeroUltraLightNodeV2 } from "./contracts/mocks/EthereumLayerZeroUltraLightNodeV2";
 export { EthereumLayerZeroUltraLightNodeV2__factory } from "./factories/contracts/mocks/EthereumLayerZeroUltraLightNodeV2__factory";
-export type { ZkOracle } from "./contracts/oracle/zkOracle.sol/ZkOracle";
-export { ZkOracle__factory } from "./factories/contracts/oracle/zkOracle.sol/ZkOracle__factory";
+export type { LightClientUpdateGen } from "./contracts/mocks/LightClientUpdateGen";
+export { LightClientUpdateGen__factory } from "./factories/contracts/mocks/LightClientUpdateGen__factory";
+export type { ZkOracle } from "./contracts/oracle/ZkOracle";
+export { ZkOracle__factory } from "./factories/contracts/oracle/ZkOracle__factory";

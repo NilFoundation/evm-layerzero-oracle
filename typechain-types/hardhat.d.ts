@@ -249,9 +249,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EthereumLayerZeroUltraLightNodeV2__factory>;
     getContractFactory(
-      name: "EthereumLightClient",
+      name: "LightClientUpdateGen",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.EthereumLightClient__factory>;
+    ): Promise<Contracts.LightClientUpdateGen__factory>;
     getContractFactory(
       name: "ZkOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -553,10 +553,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.EthereumLayerZeroUltraLightNodeV2>;
     getContractAt(
-      name: "EthereumLightClient",
+      name: "LightClientUpdateGen",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.EthereumLightClient>;
+    ): Promise<Contracts.LightClientUpdateGen>;
     getContractAt(
       name: "ZkOracle",
       address: string,

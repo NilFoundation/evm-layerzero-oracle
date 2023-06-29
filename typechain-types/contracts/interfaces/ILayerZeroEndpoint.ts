@@ -23,28 +23,19 @@ import type {
 export interface ILayerZeroEndpointInterface extends utils.Interface {
   functions: {
     "getReceiveLibraryAddress(address)": FunctionFragment;
-    "getSendLibraryAddress(address)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "getReceiveLibraryAddress" | "getSendLibraryAddress"
+    nameOrSignatureOrTopic: "getReceiveLibraryAddress"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "getReceiveLibraryAddress",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "getSendLibraryAddress",
-    values: [PromiseOrValue<string>]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "getReceiveLibraryAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSendLibraryAddress",
     data: BytesLike
   ): Result;
 
@@ -82,11 +73,6 @@ export interface ILayerZeroEndpoint extends BaseContract {
       _userApplication: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    getSendLibraryAddress(
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
   };
 
   getReceiveLibraryAddress(
@@ -94,18 +80,8 @@ export interface ILayerZeroEndpoint extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  getSendLibraryAddress(
-    _userApplication: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   callStatic: {
     getReceiveLibraryAddress(
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getSendLibraryAddress(
       _userApplication: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -118,20 +94,10 @@ export interface ILayerZeroEndpoint extends BaseContract {
       _userApplication: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getSendLibraryAddress(
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getReceiveLibraryAddress(
-      _userApplication: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSendLibraryAddress(
       _userApplication: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

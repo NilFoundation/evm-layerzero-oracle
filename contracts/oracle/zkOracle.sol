@@ -1,15 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../interfaces/ILayerZeroOracleV2.sol";
-
 import "../lorem-ipsum/interfaces/IZKLightClient.sol";
-
 import "../interfaces/ILayerZeroEndpoint.sol";
-
 import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 
 
@@ -62,7 +58,7 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
         address uln = layerZeroEndpoint.getReceiveLibraryAddress(userApplication);
         bool status;
         
-        require(uln != address(0), "ULN is not defined for the user application");
+        require(uln != address(0), "ULN is not defined for the user application!");
 
         bytes memory stepInputData = abi.encodeWithSelector(
                 IZKLightClient.step.selector,
@@ -85,17 +81,35 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
 
     }
 
-    function assignJob(uint16 _dstChainId, uint16 _proofType, uint64 _outboundBlockConfirmation, address _userApplication) external override returns (uint price) {
+    function assignJob(
+        uint16 _dstChainId, 
+        uint16 _proofType, 
+        uint64 _outboundBlockConfirmation, 
+        address _userApplication
+        ) external override returns (uint price) {
+            
         price = chainPriceLookup[_proofType][_dstChainId];
         emit OracleNotified(_dstChainId, _proofType, _outboundBlockConfirmation, _userApplication, price);
     }
 
     /// @notice query the oracle price for relaying block information to the destination chain
-    function getFee(uint16 _dstChainId, uint16 _proofType, uint64 _outboundBlockConfirmation, address _userApplication) external override view returns (uint price) {
+    function getFee(
+        uint16 _dstChainId, 
+        uint16 _proofType, 
+        uint64 _outboundBlockConfirmation, 
+        address _userApplication
+        ) external override view returns (uint price) {
+
         price = _getFee(_dstChainId, _proofType, _outboundBlockConfirmation, _userApplication);
     }
 
-    function _getFee(uint16 _dstChainId, uint16 _proofType, uint64 _outboundBlockConfirmation, address _userApplication) private view returns (uint price) {
+    function _getFee(
+        uint16 _dstChainId, 
+        uint16 _proofType, 
+        uint64 _outboundBlockConfirmation, 
+        address _userApplication
+        ) private view returns (uint price) {
+            
         price = chainPriceLookup[_proofType][_dstChainId];
     }
 
