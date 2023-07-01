@@ -6,6 +6,9 @@ require('@openzeppelin/hardhat-upgrades');
 //require("hardhat-contract-sizer");
 //require('solidity-coverage');
 
+import 'hardhat-deploy';
+import 'hardhat-deploy-ethers';
+
 import './tasks/verify_mina_proof'
 
 const SEPOLIA_PRIVATE_KEY="SEPOLIA_PRIVATE_KEY"
