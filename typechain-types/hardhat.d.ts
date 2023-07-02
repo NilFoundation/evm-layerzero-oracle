@@ -13,10 +13,6 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "IZKLightClient",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IZKLightClient__factory>;
-    getContractFactory(
       name: "IVerifier",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IVerifier__factory>;
@@ -257,11 +253,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ZkOracle__factory>;
 
-    getContractAt(
-      name: "IZKLightClient",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IZKLightClient>;
     getContractAt(
       name: "IVerifier",
       address: string,

@@ -8,8 +8,6 @@ export type { openzeppelin };
 import type * as contracts from "./contracts";
 export type { contracts };
 export * as factories from "./factories";
-export type { IZKLightClient } from "./@nilfoundation/evm-lorem-ipsum/contracts/interfaces/IZKLightClient";
-export { IZKLightClient__factory } from "./factories/@nilfoundation/evm-lorem-ipsum/contracts/interfaces/IZKLightClient__factory";
 export type { IVerifier } from "./@nilfoundation/evm-placeholder-verification/contracts/interfaces/verifier.sol/IVerifier";
 export { IVerifier__factory } from "./factories/@nilfoundation/evm-placeholder-verification/contracts/interfaces/verifier.sol/IVerifier__factory";
 export type { AccessControlUpgradeable } from "./@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable";
@@ -102,6 +100,8 @@ export type { IProofHandler } from "./contracts/lorem-ipsum/interfaces/IProofHan
 export { IProofHandler__factory } from "./factories/contracts/lorem-ipsum/interfaces/IProofHandler__factory";
 export type { IProtocolState } from "./contracts/lorem-ipsum/interfaces/IProtocolState";
 export { IProtocolState__factory } from "./factories/contracts/lorem-ipsum/interfaces/IProtocolState__factory";
+export type { IZKLightClient } from "./contracts/lorem-ipsum/interfaces/IZKLightClient";
+export { IZKLightClient__factory } from "./factories/contracts/lorem-ipsum/interfaces/IZKLightClient__factory";
 export type { UUPSProxy } from "./contracts/lorem-ipsum/libraries/Proxy.sol/UUPSProxy";
 export { UUPSProxy__factory } from "./factories/contracts/lorem-ipsum/libraries/Proxy.sol/UUPSProxy__factory";
 export type { Timelock } from "./contracts/lorem-ipsum/libraries/Timelock";
