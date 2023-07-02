@@ -111,10 +111,9 @@ contract EthereumLightClient is IProtocolState, Ownable, IZKLightClient {
     ///      3) A valid execution state root proof
     function step(LightClientUpdate calldata update) external {
         bool finalized = true;
-        /*
         
-        finalized = processStep(update);
-
+        //finalized = processStep(update);
+        
         if (getCurrentSlot() < update.attestedSlot) {
             revert("Update slot is too far in the future");
         }
@@ -122,7 +121,6 @@ contract EthereumLightClient is IProtocolState, Ownable, IZKLightClient {
         if (update.finalizedSlot < head) {
             revert("Update slot less than current head");
         }
-        */
 
         if (finalized) {
             setSlotRoots(update.finalizedSlot, update.finalizedHeaderRoot, update.executionStateRoot);

@@ -3,42 +3,53 @@ const { ethers, upgrades } = require("hardhat");
 const { expect } = require("chai");
 
 
-describe('zkOracle tests', function () {
+describe('Light Client tests', function () {
 
-  describe('end2end - Success', function () {
-    
-    it("Test", async function () {
-        let [signer1] = await ethers.getSigners();
+    describe('Basic deploy and step - Success', function () {
 
-        /* ======================= DEPLOY LightClientUpdateGen ======================= */
-        const LightClientUpdateGen = await ethers.getContractFactory("LightClientUpdateGen");
-        const lightClientUpdateGen = await LightClientUpdateGen.deploy();
-        await lightClientUpdateGen.deployed();
+        it("Run", async function () {
+            let [signer1] = await ethers.getSigners();
 
-        const someCustomUserApplicationAddress = lightClientUpdateGen.address;
-        const someNotUsedAddress = lightClientUpdateGen.address;
-        const someCustom32Bytes = '0x00000000000000000000000000000000000000000000000000000000000000AA';
+            const customUserApplicationAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
+            const placeholderVerifierAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
+            const stepAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
+            const rotateAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
+            const genesisValidatorsRoot = '0x00000000000000000000000000000000000000000000000000000000000000AA';
+            const syncCommitteePoseidon = '0x00000000000000000000000000000000000000000000000000000000000000AA';
 
-        /* ======================= DEPLOY EthereumLightClient ======================= */
-        const EthereumLightClient = await ethers.getContractFactory("EthereumLightClient");
-        const ethereumLightClient = await EthereumLightClient.deploy(
-          someNotUsedAddress, // placeholderVerifier
-          someNotUsedAddress, // step
-          someNotUsedAddress, // rotate
-          someCustom32Bytes, // genesisValidatorsRoot,
-          11, // genesisTime,
-          11, // secondsPerSlot,
-          11, // slotsPerPeriod,
-          11, // syncCommitteePeriod,
-          someCustom32Bytes, // syncCommitteePoseidon,
-          11, //  sourceChainId,
-          11 //  finalityThreshold
-        );
-        await ethereumLightClient.deployed();
+            const genesisTime = 0x10;
+            const secondsPerSlot = 0x10;
+            const slotsPerPeriod = 0x10;
+            const syncCommitteePeriod = 0x10;
+            const sourceChainId = 0x10;
+            const finalityThreshold = 0x10;
+            const srcChainId = 0x10;
+            const proofType = 0x10;
 
-        let updateData = await lightClientUpdateGen.gen();
-        events = await ethereumLightClient.step(updateData);
-       
-    });
-  })
+            /* ======================= DEPLOY LightClientUpdateGen ======================= */
+            const LightClientUpdateGen = await ethers.getContractFactory("LightClientUpdateGen");
+            const lightClientUpdateGen = await LightClientUpdateGen.deploy();
+            await lightClientUpdateGen.deployed();
+
+            /* ======================= DEPLOY EthereumLightClient ======================= */
+            const EthereumLightClient = await ethers.getContractFactory("EthereumLightClient");
+            const ethereumLightClient = await EthereumLightClient.deploy(
+                placeholderVerifierAddress, // placeholderVerifier
+                stepAddress, // step
+                rotateAddress, // rotate
+                genesisValidatorsRoot, // genesisValidatorsRoot,
+                genesisTime, // genesisTime,
+                secondsPerSlot, // secondsPerSlot,
+                slotsPerPeriod, // slotsPerPeriod,
+                syncCommitteePeriod, // syncCommitteePeriod,
+                syncCommitteePoseidon, // syncCommitteePoseidon,
+                sourceChainId, //  sourceChainId,
+                finalityThreshold //  finalityThreshold
+            );
+            await ethereumLightClient.deployed();
+
+            let updateData = await lightClientUpdateGen.gen();
+            events = await ethereumLightClient.step(updateData);
+        });
+    })
 });

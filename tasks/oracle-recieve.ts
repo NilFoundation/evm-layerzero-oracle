@@ -1,20 +1,23 @@
-const { task } = require("hardhat/config");
-const fs = require("fs");
+import { task } from "hardhat/config";
+import * as fs from 'fs';
+import {ZkOracle__factory, type ZkOracle} from '../typechain-types'
 
-require("@nomicfoundation/hardhat-toolbox");
-
-task("recieve_and_update", 
+task("recieve-and-update", 
     "reieve new protocol state (hash) via zkOracle and update it in ULN")
-    .addParam("srcChain", "Source chain ID")
-    .addParam("proofType", "Proof type indentifier")
-    .addParam("userApp", "User application address")
-    .addParam("updateFile", "Light client update file")
-    .setAction(async ({srcChain, proofType, userApp, updateFile}, hre) => {
+    .addParam("contract", "contract address")
+    .addParam("schain", "Source chain ID")
+    .addParam("pf", "Proof type indentifier")
+    .addParam("ua", "User application address")
+    .addParam("update", "Light client update file")
+    .setAction(async ({contract, schain, pf, ua, update}, hre) => {
         const { ethers } = hre;
+        const [owner] = await ethers.getSigners();
 
-        const zkOracle = await ethers.getContract("zkOracle");
-
-        const jsonData = fs.readFileSync(updateFile, "utf8");
+        const zkOracle = ZkOracle__factory.connect(
+            contract,
+            owner
+        )
+        const jsonData = fs.readFileSync(update, "utf8");
 
         const data = JSON.parse(jsonData);
 
@@ -35,7 +38,7 @@ task("recieve_and_update",
         };
 
         const tx = await zkOracle.processRequest(
-            srcChain, proofType, userApp, lightClientUpdate);
+            schain, pf, ua, lightClientUpdate);
         const receipt = await tx.wait()
         console.log(receipt)
     });

@@ -5,7 +5,11 @@ import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 
 contract EthereumLayerZeroUltraLightNodeV2 is ILayerZeroUltraLightNodeV2 {
 
-    event HashUpdated(uint16 _srcChainId, bytes32 _lookupHash, uint _confirmations, bytes32 _blockData);
+    event HashUpdated(
+        uint16 _srcChainId, 
+        bytes32 _lookupHash, 
+        uint _confirmations, 
+        bytes32 _blockData);
     event WithdrawNative(address payable _to, uint _amount);
     event MagicCodeVerify(uint256);
 

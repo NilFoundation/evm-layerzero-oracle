@@ -11,7 +11,7 @@ contract EthereumLayerZeroEndpoint is ILayerZeroEndpoint {
         address[] memory userApplications, 
         address[] memory receiveLibraryAddress) {
             
-        require(userApplications.length == receiveLibraryAddress.length, "length not equal");
+        require(userApplications.length == receiveLibraryAddress.length, "Length not equal!");
 
         for (uint i = 0; i < userApplications.length; ++i) {
             receiveLibraryAddressMapping[userApplications[i]] = receiveLibraryAddress[i];

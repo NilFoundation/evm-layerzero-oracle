@@ -74,43 +74,70 @@ describe('zkOracle tests', function () {
         
         it("Emulates zkOracle that invokes on-chain hash update on ULN via zkLightClient and proof verification", async function () {
             
-            const someCustomUserApplicationAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
-            const someNotUsedAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
-            const someCustom32Bytes = '0x00000000000000000000000000000000000000000000000000000000000000AA';
+            const customUserApplicationAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
+            const placeholderVerifierAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
+            const stepAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
+            const rotateAddress = '0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1';
+            const genesisValidatorsRoot = '0x00000000000000000000000000000000000000000000000000000000000000AA';
+            const syncCommitteePoseidon = '0x00000000000000000000000000000000000000000000000000000000000000AA';
+
+            const genesisTime = 0x10;
+            const secondsPerSlot = 0x10;
+            const slotsPerPeriod = 0x10;
+            const syncCommitteePeriod = 0x10;
+            const sourceChainId = 0x10;
+            const finalityThreshold = 0x10;
+            const srcChainId = 0x10;
+            const proofType = 0x10;
 
             /* ======================= DEPLOY EthereumLayerZeroUltraLightNodeV2 ======================= */
             let ethereumLayerZeroUltraLightNodeV2 = await deployEthereumLayerZeroUltraLightNodeV2();
 
             /* ======================= DEPLOY EthereumLayerZeroEndpoint ======================= */
-            let ethereumLayerZeroEndpoint = await deployEthereumLayerZeroEndpoint([someCustomUserApplicationAddress], [ethereumLayerZeroUltraLightNodeV2.address]);
+            let ethereumLayerZeroEndpoint = await deployEthereumLayerZeroEndpoint(
+                [customUserApplicationAddress], 
+                [ethereumLayerZeroUltraLightNodeV2.address]
+            );
 
             /* ======================= DEPLOY LightClientUpdateGen ======================= */
             let lightClientUpdateGen = await deployLightClientUpdateGen();
 
             /* ======================= DEPLOY EthereumLightClient ======================= */
             let ethereumLightClient = await deployEthereumLightClient(
-                someNotUsedAddress, // placeholderVerifier
-                someNotUsedAddress, // step
-                someNotUsedAddress, // rotate
-                someCustom32Bytes, // genesisValidatorsRoot,
-                11, // genesisTime,
-                11, // secondsPerSlot,
-                11, // slotsPerPeriod,
-                11, // syncCommitteePeriod,
-                someCustom32Bytes, // syncCommitteePoseidon,
-                11, //  sourceChainId,
-                11 //  finalityThreshold
+                placeholderVerifierAddress, // placeholderVerifier
+                stepAddress, // step
+                rotateAddress, // rotate
+                genesisValidatorsRoot, // genesisValidatorsRoot,
+                genesisTime, // genesisTime,
+                secondsPerSlot, // secondsPerSlot,
+                slotsPerPeriod, // slotsPerPeriod,
+                syncCommitteePeriod, // syncCommitteePeriod,
+                syncCommitteePoseidon, // syncCommitteePoseidon,
+                sourceChainId, //  sourceChainId,
+                finalityThreshold //  finalityThreshold
             );
 
             /* ======================= DEPLOY zkOracle ======================= */
-            let zkOracle = await deployZKOracle(ethereumLayerZeroEndpoint.address, [ethereumLayerZeroUltraLightNodeV2.address]);
+            let zkOracle = await deployZKOracle(
+                ethereumLayerZeroEndpoint.address, // Endpoint address
+                [ethereumLayerZeroUltraLightNodeV2.address] // ULNs
+            );
 
 
-            await zkOracle.setLightClient(ethereumLightClient.address, someCustomUserApplicationAddress);
+            await zkOracle.setLightClient(
+                ethereumLightClient.address, //
+                customUserApplicationAddress
+            );
 
 
-            let data_in = await lightClientUpdateGen.gen();
-            events = await zkOracle.processRequest(16, 16, someCustomUserApplicationAddress, data_in);
+            let update_light_client_data = await lightClientUpdateGen.gen();
+            events = await zkOracle.processRequest(
+                srcChainId, 
+                proofType, 
+                customUserApplicationAddress, 
+                update_light_client_data
+            );
+
             logs_out = await events.wait()
             events_data = logs_out.events
 

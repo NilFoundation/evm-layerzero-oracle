@@ -12,12 +12,17 @@ import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 contract zkOracle is ILayerZeroOracleV2, Ownable {
 
     event ModLayerZeroEndpoint(address oldLayerZeroEndpoint, address newLayerZeroEndpoint);
-    event OracleNotified(uint16 dstChainId, uint16 proofType, uint blockConfirmations, address ua, uint fee);
+    event OracleNotified(
+        uint16 dstChainId, 
+        uint16 _outboundProofType, 
+        uint blockConfirmations, 
+        address ua, 
+        uint fee);
     event WithdrawFee(address receiver, uint256 amount);
 
     // userApplication => lightClient address
     mapping(address => address) lightClients;
-    // proofType => dstChainId => price on chain with designated proof type
+    // _outboundProofType => dstChainId => price on chain with designated proof type
     mapping(uint16 => mapping(uint16 => uint)) public chainPriceLookup;
     // array of ultra light nodes
     address[] ULNs;
@@ -48,7 +53,7 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
     // 3) update hash on ULN
     function processRequest(
         uint16 srcChainId, 
-        uint16 proofType, 
+        uint16 _outboundProofType, 
         address userApplication, 
         LightClientUpdate calldata lcUpdate
         ) external {
@@ -62,10 +67,7 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
 
         bytes memory stepInputData = abi.encodeWithSelector(
                 IZKLightClient.step.selector,
-                proofType,
-                srcChainId,
-                lcUpdate,
-                uln // here must be public input
+                lcUpdate
         );
         
         (status,) = lightClients[userApplication].call(stepInputData);
@@ -83,34 +85,34 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
 
     function assignJob(
         uint16 _dstChainId, 
-        uint16 _outboundProofType, 
+        uint16 __outboundProofType, 
         uint64 _outboundBlockConfirmation, 
         address _userApplication
         ) external override returns (uint price) {
             
-        price = chainPriceLookup[_outboundProofType][_dstChainId];
-        emit OracleNotified(_dstChainId, _outboundProofType, _outboundBlockConfirmation, _userApplication, price);
+        price = chainPriceLookup[__outboundProofType][_dstChainId];
+        emit OracleNotified(_dstChainId, __outboundProofType, _outboundBlockConfirmation, _userApplication, price);
     }
 
     /// @notice query the oracle price for relaying block information to the destination chain
     function getFee(
         uint16 _dstChainId, 
-        uint16 _proofType, 
+        uint16 __outboundProofType, 
         uint64 _outboundBlockConfirmation, 
         address _userApplication
         ) external override view returns (uint price) {
 
-        price = _getFee(_dstChainId, _proofType, _outboundBlockConfirmation, _userApplication);
+        price = _getFee(_dstChainId, __outboundProofType, _outboundBlockConfirmation, _userApplication);
     }
 
     function _getFee(
         uint16 _dstChainId, 
-        uint16 _proofType, 
+        uint16 __outboundProofType, 
         uint64 _outboundBlockConfirmation, 
         address _userApplication
         ) private view returns (uint price) {
             
-        price = chainPriceLookup[_proofType][_dstChainId];
+        price = chainPriceLookup[__outboundProofType][_dstChainId];
     }
 
     function getLzUlnLength() public view returns (uint256) {
@@ -124,7 +126,8 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
     /// @notice finds total uln balance
     function feeBalance() public view returns (uint256 balance) {
         for (uint256 i = 0; i < getLzUlnLength(); i++) {
-            uint256 ulnBalance = ILayerZeroUltraLightNodeV2(getLzUln(i)).accruedNativeFee(address(this));
+            uint256 ulnBalance = 
+                ILayerZeroUltraLightNodeV2(getLzUln(i)).accruedNativeFee(address(this));
             balance += ulnBalance;
         }
     }
@@ -136,7 +139,8 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
         uint256 surplusAmount = _amount;
         
         for (uint256 i = 0; i < getLzUlnLength(); ++i) {
-            uint256 ulnBalance = ILayerZeroUltraLightNodeV2(getLzUln(i)).accruedNativeFee(address(this));
+            uint256 ulnBalance = 
+                ILayerZeroUltraLightNodeV2(getLzUln(i)).accruedNativeFee(address(this));
             if (ulnBalance > 0) {
                 if (ulnBalance >= surplusAmount) {
                     ILayerZeroUltraLightNodeV2(getLzUln(i)).withdrawNative(_to, surplusAmount);
