@@ -2,7 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as interfaces from "./interfaces";
-export * as libraries from "./libraries";
 export * as loremIpsum from "./lorem-ipsum";
 export * as mocks from "./mocks";
 export * as oracle from "./oracle";

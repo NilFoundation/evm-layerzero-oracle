@@ -357,7 +357,6 @@ export interface TimelockControllerInterface extends utils.Interface {
 
   events: {
     "CallExecuted(bytes32,uint256,address,uint256,bytes)": EventFragment;
-    "CallSalt(bytes32,bytes32)": EventFragment;
     "CallScheduled(bytes32,uint256,address,uint256,bytes,bytes32,uint256)": EventFragment;
     "Cancelled(bytes32)": EventFragment;
     "MinDelayChange(uint256,uint256)": EventFragment;
@@ -367,7 +366,6 @@ export interface TimelockControllerInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "CallExecuted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CallSalt"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CallScheduled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Cancelled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MinDelayChange"): EventFragment;
@@ -389,14 +387,6 @@ export type CallExecutedEvent = TypedEvent<
 >;
 
 export type CallExecutedEventFilter = TypedEventFilter<CallExecutedEvent>;
-
-export interface CallSaltEventObject {
-  id: string;
-  salt: string;
-}
-export type CallSaltEvent = TypedEvent<[string, string], CallSaltEventObject>;
-
-export type CallSaltEventFilter = TypedEventFilter<CallSaltEvent>;
 
 export interface CallScheduledEventObject {
   id: string;
@@ -529,7 +519,9 @@ export interface TimelockController extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getMinDelay(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getMinDelay(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { duration: BigNumber }>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -539,7 +531,7 @@ export interface TimelockController extends BaseContract {
     getTimestamp(
       id: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { timestamp: BigNumber }>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -560,7 +552,7 @@ export interface TimelockController extends BaseContract {
       predecessor: PromiseOrValue<BytesLike>,
       salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[string] & { hash: string }>;
 
     hashOperationBatch(
       targets: PromiseOrValue<string>[],
@@ -569,27 +561,27 @@ export interface TimelockController extends BaseContract {
       predecessor: PromiseOrValue<BytesLike>,
       salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[string] & { hash: string }>;
 
     isOperation(
       id: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[boolean] & { registered: boolean }>;
 
     isOperationDone(
       id: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[boolean] & { done: boolean }>;
 
     isOperationPending(
       id: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[boolean] & { pending: boolean }>;
 
     isOperationReady(
       id: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[boolean] & { ready: boolean }>;
 
     onERC1155BatchReceived(
       arg0: PromiseOrValue<string>,
@@ -1003,15 +995,6 @@ export interface TimelockController extends BaseContract {
       value?: null,
       data?: null
     ): CallExecutedEventFilter;
-
-    "CallSalt(bytes32,bytes32)"(
-      id?: PromiseOrValue<BytesLike> | null,
-      salt?: null
-    ): CallSaltEventFilter;
-    CallSalt(
-      id?: PromiseOrValue<BytesLike> | null,
-      salt?: null
-    ): CallSaltEventFilter;
 
     "CallScheduled(bytes32,uint256,address,uint256,bytes,bytes32,uint256)"(
       id?: PromiseOrValue<BytesLike> | null,

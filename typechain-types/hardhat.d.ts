@@ -137,10 +137,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ILayerZeroUltraLightNodeV2__factory>;
     getContractFactory(
-      name: "Timelock",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Timelock__factory>;
-    getContractFactory(
       name: "IExecuteMessageTransitionHandler",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IExecuteMessageTransitionHandler__factory>;
@@ -412,11 +408,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ILayerZeroUltraLightNodeV2>;
-    getContractAt(
-      name: "Timelock",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Timelock>;
     getContractAt(
       name: "IExecuteMessageTransitionHandler",
       address: string,

@@ -70,8 +70,6 @@ export type { ILayerZeroOracleV2 } from "./contracts/interfaces/ILayerZeroOracle
 export { ILayerZeroOracleV2__factory } from "./factories/contracts/interfaces/ILayerZeroOracleV2__factory";
 export type { ILayerZeroUltraLightNodeV2 } from "./contracts/interfaces/ILayerZeroUltraLightNodeV2";
 export { ILayerZeroUltraLightNodeV2__factory } from "./factories/contracts/interfaces/ILayerZeroUltraLightNodeV2__factory";
-export type { Timelock } from "./contracts/libraries/Timelock";
-export { Timelock__factory } from "./factories/contracts/libraries/Timelock__factory";
 export type { IExecuteMessageTransitionHandler } from "./contracts/lorem-ipsum/amb/interfaces/ILoremIpsum.sol/IExecuteMessageTransitionHandler";
 export { IExecuteMessageTransitionHandler__factory } from "./factories/contracts/lorem-ipsum/amb/interfaces/ILoremIpsum.sol/IExecuteMessageTransitionHandler__factory";
 export type { ILoremIpsumReceiver } from "./contracts/lorem-ipsum/amb/interfaces/ILoremIpsum.sol/ILoremIpsumReceiver";
@@ -106,6 +104,8 @@ export type { IZKLightClient } from "./contracts/lorem-ipsum/interfaces/IZKLight
 export { IZKLightClient__factory } from "./factories/contracts/lorem-ipsum/interfaces/IZKLightClient__factory";
 export type { UUPSProxy } from "./contracts/lorem-ipsum/libraries/Proxy.sol/UUPSProxy";
 export { UUPSProxy__factory } from "./factories/contracts/lorem-ipsum/libraries/Proxy.sol/UUPSProxy__factory";
+export type { Timelock } from "./contracts/lorem-ipsum/libraries/Timelock";
+export { Timelock__factory } from "./factories/contracts/lorem-ipsum/libraries/Timelock__factory";
 export type { MockEthereumLightClient } from "./contracts/lorem-ipsum/mocks/MockEthereumLightClient";
 export { MockEthereumLightClient__factory } from "./factories/contracts/lorem-ipsum/mocks/MockEthereumLightClient__factory";
 export type { MockEthereumLightClientHandler } from "./contracts/lorem-ipsum/mocks/MockEthereumLightClientHandler";

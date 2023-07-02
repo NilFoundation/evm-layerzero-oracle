@@ -83,13 +83,13 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
 
     function assignJob(
         uint16 _dstChainId, 
-        uint16 _proofType, 
+        uint16 _outboundProofType, 
         uint64 _outboundBlockConfirmation, 
         address _userApplication
         ) external override returns (uint price) {
             
-        price = chainPriceLookup[_proofType][_dstChainId];
-        emit OracleNotified(_dstChainId, _proofType, _outboundBlockConfirmation, _userApplication, price);
+        price = chainPriceLookup[_outboundProofType][_dstChainId];
+        emit OracleNotified(_dstChainId, _outboundProofType, _outboundBlockConfirmation, _userApplication, price);
     }
 
     /// @notice query the oracle price for relaying block information to the destination chain

@@ -1,15 +1,12 @@
 require("@nomicfoundation/hardhat-toolbox");
-//require("@nomiclabs/hardhat-ethers");
-//require("hardhat-deploy");
-//require('hardhat-deploy-ethers')
+require("@nomiclabs/hardhat-ethers");
+require("hardhat-deploy");
+require('hardhat-deploy-ethers')
 require('@openzeppelin/hardhat-upgrades');
-//require("hardhat-contract-sizer");
-//require('solidity-coverage');
+require("hardhat-contract-sizer");
 
-import 'hardhat-deploy';
-import 'hardhat-deploy-ethers';
-
-import './tasks/verify_mina_proof'
+import './tasks/oracle_send'
+import './tasks/oracle_recieve'
 
 const SEPOLIA_PRIVATE_KEY="SEPOLIA_PRIVATE_KEY"
 const SEPOLIA_ALCHEMY_KEY="SEPOLIA_ALCHEMY_KEY"
@@ -28,6 +25,7 @@ module.exports = {
     },
     namedAccounts: {
         deployer: 0,
+        userApp: 1,
     },
     networks: {
         hardhat: {
@@ -48,6 +46,12 @@ module.exports = {
     },
     etherscan: {
         apiKey: ETHERSCAN_KEY,
+    },
+    paths: {
+        sources: "./contracts",
+        tests: "./test",
+        cache: "./cache",
+        artifacts: "./artifacts"
     },
     allowUnlimitedContractSize:true
 };
