@@ -29,13 +29,8 @@ module.exports = async function () {
 
     lz_endpoint = (await hre.deployments.get('EthereumLayerZeroEndpoint')).address;
 
-    await deploy('zkOracle', {
-        from: deployer,
-        args: [lz_endpoint, [lz_ultralightnode]],
-        log: true,
-    });
-
-    zkOracle =  await ethers.getContract("zkOracle");
+    const zkOracleFactory = await ethers.getContractFactory("zkOracle");
+    const zkOracle = await zkOracleFactory.deploy(lz_endpoint, [lz_ultralightnode]);
 
     // deploy light client and link it to the oracle
     const verifierAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"

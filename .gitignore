@@ -102,11 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
-package-lock.json
 node_modules
 coverage.json
-typechain
-typechain-types
 
 # Hardhat files
 cache
@@ -115,4 +112,3 @@ deployments
 
 .idea/
 .secret
-typechain-types/

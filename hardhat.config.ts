@@ -1,7 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('@openzeppelin/hardhat-upgrades');
+require("@nomiclabs/hardhat-ethers");
 
-import './tasks/deploy'
 import './tasks/deploy-test'
 import './tasks/verify-etherscan'
 import './tasks/zkOracle'

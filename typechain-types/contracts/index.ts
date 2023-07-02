@@ -3,8 +3,6 @@
 /* eslint-disable */
 import type * as interfaces from "./interfaces";
 export type { interfaces };
-import type * as loremIpsum from "./lorem-ipsum";
-export type { loremIpsum };
 import type * as mocks from "./mocks";
 export type { mocks };
 import type * as oracle from "./oracle";
