@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@nilfoundation/evm-lorem-ipsum/contracts/interfaces/IZKLightClient.sol";
 
 import "../interfaces/ILayerZeroOracleV2.sol";
-import "../lorem-ipsum/interfaces/IZKLightClient.sol";
 import "../interfaces/ILayerZeroEndpoint.sol";
 import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 
