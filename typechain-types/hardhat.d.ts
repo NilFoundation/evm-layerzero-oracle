@@ -13,9 +13,21 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "EthereumLightClient",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EthereumLightClient__factory>;
+    getContractFactory(
+      name: "IProtocolState",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IProtocolState__factory>;
+    getContractFactory(
       name: "IZKLightClient",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IZKLightClient__factory>;
+    getContractFactory(
+      name: "IVerifier",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IVerifier__factory>;
     getContractFactory(
       name: "Ownable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -50,10 +62,25 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.ZkOracle__factory>;
 
     getContractAt(
+      name: "EthereumLightClient",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EthereumLightClient>;
+    getContractAt(
+      name: "IProtocolState",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IProtocolState>;
+    getContractAt(
       name: "IZKLightClient",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IZKLightClient>;
+    getContractAt(
+      name: "IVerifier",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IVerifier>;
     getContractAt(
       name: "Ownable",
       address: string,

@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as evmLoremIpsum from "./evm-lorem-ipsum";
+export * as evmPlaceholderVerification from "./evm-placeholder-verification";

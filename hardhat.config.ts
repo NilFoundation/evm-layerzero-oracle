@@ -2,11 +2,12 @@ require("@nomicfoundation/hardhat-toolbox");
 require('@openzeppelin/hardhat-upgrades');
 require("@nomiclabs/hardhat-ethers");
 
+import './tasks/deploy'
 import './tasks/deploy-test'
 import './tasks/verify-etherscan'
 import './tasks/zkOracle'
-import './tasks/oracle-recieve'
-import './tasks/oracle-send'
+//import './tasks/oracle-recieve'
+//import './tasks/oracle-send'
 
 module.exports = {
     solidity: {

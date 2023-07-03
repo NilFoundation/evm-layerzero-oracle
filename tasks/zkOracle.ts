@@ -1,13 +1,10 @@
 import {task} from 'hardhat/config'
-import {ZkOracle__factory, type ZkOracle} from '../typechain-types'
-
 
 async function connect(ethers, contract)  {
     const [owner] = await ethers.getSigners();
-    let zkOracle = ZkOracle__factory.connect(
-        contract,
-        owner
-    )
+    const ZkOracle = await ethers.getContractFactory("zkOracle")
+    const oracle_inst = ZkOracle.attach(contract)
+    const zkOracle = await oracle_inst.connect(owner)
 
     return {owner, zkOracle};
 }
@@ -74,14 +71,13 @@ task("assignJob")
         const proofType = taskArgs.proof
         const userApp = taskArgs.ua
         const confirmations = taskArgs.conf
-        
         let {owner, zkOracle} = await connect(ethers, contract)
 
         const cost = await zkOracle.assignJob(
             srcChainId,
             proofType,
-            userApp,
-            confirmations
+            confirmations,
+            userApp
         )
 
         console.log("Cost: ", cost);
@@ -105,8 +101,8 @@ task("getFee")
         const cost = await zkOracle.getFee(
             srcChainId,
             proofType,
-            userApp,
-            confirmations
+            confirmations,
+            userApp
         )
 
         console.log("Cost:", cost)

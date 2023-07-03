@@ -1,6 +1,7 @@
 const Hardhat = require("hardhat");
 const { ethers, upgrades } = require("hardhat");
 const { expect } = require("chai");
+//const ensRegistryCompiled = requires('@nilfoundation/evm-lorem-ipsum/artifacts/contracts/registry/ENSRegistry.sol/ENSRegistry.json');
 
 
 describe('zkOracle tests', function () {

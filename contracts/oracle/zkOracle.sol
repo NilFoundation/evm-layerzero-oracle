@@ -82,7 +82,6 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
             );
 
     }
-
     function assignJob(
         uint16 _dstChainId, 
         uint16 __outboundProofType, 
@@ -133,7 +132,11 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
     }
 
     /// @notice withdraw the accrued fee in ultra light node
-    function withdrawFee(address payable _to, uint _amount) external override onlyOwner {
+    function withdrawFee(
+        address payable _to, 
+        uint _amount
+        ) external override onlyOwner {
+        
         require(feeBalance() >= _amount, "insufficient balance");
         
         uint256 surplusAmount = _amount;

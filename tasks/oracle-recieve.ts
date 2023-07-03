@@ -1,6 +1,14 @@
 import { task } from "hardhat/config";
 import * as fs from 'fs';
-import {ZkOracle__factory, type ZkOracle} from '../typechain-types'
+
+async function connect(ethers, contract)  {
+    const [owner] = await ethers.getSigners();
+    const ZkOracle = await ethers.getContractFactory("zkOracle")
+    const oracle_inst = ZkOracle.attach(contract)
+    const zkOracle = await oracle_inst.connect(owner)
+
+    return {owner, zkOracle};
+}
 
 task("recieve-and-update", 
     "reieve new protocol state (hash) via zkOracle and update it in ULN")
@@ -11,12 +19,9 @@ task("recieve-and-update",
     .addParam("update", "Light client update file")
     .setAction(async ({contract, schain, pf, ua, update}, hre) => {
         const { ethers } = hre;
-        const [owner] = await ethers.getSigners();
 
-        const zkOracle = ZkOracle__factory.connect(
-            contract,
-            owner
-        )
+        const {owner, zkOracle} = await connect(ethers, contract)
+
         const jsonData = fs.readFileSync(update, "utf8");
 
         const data = JSON.parse(jsonData);
