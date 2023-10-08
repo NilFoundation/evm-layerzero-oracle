@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
-import "@nilfoundation/evm-lorem-ipsum/contracts/ethereum/EthereumLightClient.sol";
+pragma solidity ^0.7.6;
 
 contract TestDeps {
 

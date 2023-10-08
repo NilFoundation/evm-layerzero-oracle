@@ -11,13 +11,27 @@ import './tasks/zkOracle'
 
 module.exports = {
     solidity: {
-        version: "0.8.16",
-        settings: {
-            optimizer: {
-                enabled: true,
-                runs: 200,
+        compilers: [
+            {
+                version: "0.7.6",
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
             },
-        },
+            {
+                version: "0.8.16",
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
+            }
+        ]
+
     },
     namedAccounts: {
         deployer: 0,

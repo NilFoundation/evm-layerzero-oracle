@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@nilfoundation/evm-lorem-ipsum/contracts/interfaces/IZKLightClient.sol";
 
 import "../interfaces/ILayerZeroOracleV2.sol";
@@ -9,7 +8,7 @@ import "../interfaces/ILayerZeroEndpoint.sol";
 import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 
 
-contract zkOracle is ILayerZeroOracleV2, Ownable {
+contract zkOracle is ILayerZeroOracleV2 {
 
     event ModLayerZeroEndpoint(address oldLayerZeroEndpoint, address newLayerZeroEndpoint);
     event OracleNotified(
@@ -39,7 +38,7 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
     }
 
     /// @notice set LayerZero endpoint address
-    function setLayerZeroEndpoint(address _layerZeroEndpoint) external onlyOwner {
+    function setLayerZeroEndpoint(address _layerZeroEndpoint) external  {
         require(_layerZeroEndpoint != address(0), "zero address!");
 
         layerZeroEndpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
@@ -135,7 +134,7 @@ contract zkOracle is ILayerZeroOracleV2, Ownable {
     function withdrawFee(
         address payable _to, 
         uint _amount
-        ) external override onlyOwner {
+        ) external override  {
         
         require(feeBalance() >= _amount, "insufficient balance");
         
