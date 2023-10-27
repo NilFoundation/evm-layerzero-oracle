@@ -10,6 +10,8 @@ import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
 
 contract zkOracle is ILayerZeroOracleV2 {
 
+    event ProcessRequestDone(uint16 srcChainID, bytes32 packetHash);
+
     event ModLayerZeroEndpoint(address oldLayerZeroEndpoint, address newLayerZeroEndpoint);
     event OracleNotified(
         uint16 dstChainId, 
@@ -20,7 +22,7 @@ contract zkOracle is ILayerZeroOracleV2 {
     event WithdrawFee(address receiver, uint256 amount);
 
     // userApplication => lightClient address
-    mapping(address => address) lightClients;
+    mapping(uint16 => address) lightClients;
     // _outboundProofType => dstChainId => price on chain with designated proof type
     mapping(uint16 => mapping(uint16 => uint)) public chainPriceLookup;
     // array of ultra light nodes
@@ -33,8 +35,8 @@ contract zkOracle is ILayerZeroOracleV2 {
         layerZeroEndpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
     }
 
-    function setLightClient(address _lightClient, address _userApplication) external {
-        lightClients[_userApplication] = _lightClient;
+    function setLightClient(address _lightClient, uint16 _chainID) external {
+        lightClients[_chainID] = _lightClient;
     }
 
     /// @notice set LayerZero endpoint address
@@ -52,34 +54,37 @@ contract zkOracle is ILayerZeroOracleV2 {
     // 3) update hash on ULN
     function processRequest(
         uint16 srcChainId, 
-        uint16 _outboundProofType, 
+        uint16 outboundProofType, 
         address userApplication, 
+        bytes32 packetHash,
         LightClientUpdate calldata lcUpdate
         ) external {
-        
-        require(lightClients[userApplication] != address(0), "there's no such user applicaion!");
 
-        address uln = layerZeroEndpoint.getReceiveLibraryAddress(userApplication);
+        require(lightClients[srcChainId] != address(0), "nil: no light client for the source chain!");
+
+        //address uln = layerZeroEndpoint.getReceiveLibraryAddress(userApplication);
+        address uln = ULNs[0];
         bool status;
         
-        require(uln != address(0), "ULN is not defined for the user application!");
+        require(uln != address(0), "nil: ULN is not defined for the user application!");
 
         bytes memory stepInputData = abi.encodeWithSelector(
                 IZKLightClient.step.selector,
                 lcUpdate
         );
         
-        (status,) = lightClients[userApplication].call(stepInputData);
+        (status,) = lightClients[srcChainId].call(stepInputData);
         
-        require(status, "light client update call fail!");
+        require(status, "nil: light client update call fail!");
 
         ILayerZeroUltraLightNodeV2(uln).updateHash(
                 srcChainId, // _srcChainId
-                lcUpdate.executionStateRoot, // _lookupHash
+                packetHash, // _lookupHash
                 lcUpdate.participation, // _confirmations
                 lcUpdate.finalizedHeaderRoot // _blockData
             );
 
+        emit ProcessRequestDone(srcChainId, packetHash);
     }
     function assignJob(
         uint16 _dstChainId, 
