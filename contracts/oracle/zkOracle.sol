@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import "@nilfoundation/evm-lorem-ipsum/contracts/interfaces/IZKLightClient.sol";
 
-import "../interfaces/ILayerZeroOracleV2.sol";
-import "../interfaces/ILayerZeroEndpoint.sol";
-import "../interfaces/ILayerZeroUltraLightNodeV2.sol";
-
+// v2
+import "@layerzerolabs/core/contracts/interfaces/ILayerZeroOracleV2.sol";
+import "@layerzerolabs/core/contracts/interfaces/ILayerZeroUltraLightNodeV2.sol";
+import "@layerzerolabs/core/contracts/interfaces/ILayerZeroEndpoint.sol";
 
 contract zkOracle is ILayerZeroOracleV2 {
 
