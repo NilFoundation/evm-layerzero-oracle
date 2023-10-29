@@ -51,6 +51,7 @@ task("processRequest")
     // .addParam('proof', 'type of proof to be used')
     // .addParam('ua', 'user application address')
     .addParam('update', 'update structure', 'tasks/input_data/update.json')
+    .addParam('proofPath', 'proof file', 'tasks/input_data/proof.bin')
     .setAction(async (taskArgs, {ethers, run}) => {
         const contract = taskArgs.contract
         const srcChainId = taskArgs.schain
@@ -62,7 +63,14 @@ task("processRequest")
         const jsonString = fs.readFileSync(taskArgs.update, 'utf-8');
         let update = losslessJSON.parse(jsonString, bigintReviver);
 
-        // update.proof = update.proof.slice(0, -1) + '0';
+        // read proof from proof_account.bin
+        let proof = fs.readFileSync(taskArgs.proofPath, 'utf8');
+        update.proof = proof;
+
+        // spoil the proof
+        // update.proof = update.proof.slice(0, -1) + '1';
+
+        console.log("update: ", update);
         
 
         await zkOracle.processRequest(
