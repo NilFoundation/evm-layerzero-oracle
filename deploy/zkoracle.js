@@ -51,7 +51,8 @@ module.exports = async function () {
     );
     await ethereumLightClient.deployed();
 
-    await zkOracle.setLightClient(ethereumLightClient.address, user_app);
+    // await zkOracle.setLightClient(ethereumLightClient.address, user_app);
+    await zkOracle.setLightClient("0x8A71089E03aC86794eB048951ce4989b8ACD699A", "0x2789");
 }
 
 module.exports.tags = ['zkOracleFixture']

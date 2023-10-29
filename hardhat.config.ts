@@ -1,6 +1,8 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('@openzeppelin/hardhat-upgrades');
 require("@nomiclabs/hardhat-ethers");
+require("hardhat-deploy");
+require('hardhat-deploy-ethers')
 
 import './tasks/deploy'
 import './tasks/deploy-test'
@@ -8,6 +10,9 @@ import './tasks/verify-etherscan'
 import './tasks/zkOracle'
 //import './tasks/oracle-recieve'
 //import './tasks/oracle-send'
+
+const SEPOLIA_PRIVATE_KEY="..."
+const SEPOLIA_ALCHEMY_KEY="..."
 
 module.exports = {
     solidity: {
@@ -31,7 +36,6 @@ module.exports = {
                 },
             }
         ]
-
     },
     namedAccounts: {
         deployer: 0,
@@ -51,7 +55,11 @@ module.exports = {
         goerli: {
             url: "https://eth-goerli.g.alchemy.com/v2/HJh5G_Jf0azUM_rW-ADMDCFCPAP36QoE",
             //accounts: [SEPOLIA_PRIVATE_KEY]
-        }
+        },
+        sepolia: {
+            url: `https://eth-sepolia.g.alchemy.com/v2/${SEPOLIA_ALCHEMY_KEY}`,
+            accounts: [SEPOLIA_PRIVATE_KEY]
+        },
     },
     allowUnlimitedContractSize:true
 };
